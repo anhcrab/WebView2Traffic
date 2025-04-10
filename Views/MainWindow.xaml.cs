@@ -28,7 +28,7 @@ namespace WebView2Traffic.Views
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("Clicked");
-            ((MainWindowViewModel) DataContext).ReloadDataCommand.Execute(sender);
+            //((MainWindowViewModel) DataContext).ReloadDataCommand.Execute(sender);
         }
     }
 }

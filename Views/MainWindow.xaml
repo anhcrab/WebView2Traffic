@@ -70,16 +70,22 @@
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Reload Data" 
-                        Command="{Binding StopAllClientsCommand}" 
+                        Command="{Binding ReloadDataCommand, UpdateSourceTrigger=PropertyChanged}" 
                         Click="Button_Click"
                         Margin="10,0,0,0"
                         Height="24"
                         Width="80"
-                        IsEnabled="True"/>
+                        IsEnabled="{Binding Path=ExcelFilePath, Converter={StaticResource NonEmptyStringToBooleanConverter}}"/>
             </StackPanel>
         </Grid>
 
-        <ListBox Grid.Row="2" Margin="10" ItemsSource="{Binding TrafficURLs, UpdateSourceTrigger=PropertyChanged}">
+        <DataGrid Grid.Row="2" Margin="10, 0, 10, 0" 
+                  x:Name="TrafficTable" 
+                  AutoGenerateColumns="True"  
+                  HorizontalContentAlignment="Stretch"
+                  ItemsSource="{Binding TrafficURLs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!--<ListBox Grid.Row="2" Margin="10" ItemsSource="{Binding TrafficURLs, UpdateSourceTrigger=PropertyChanged}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -98,7 +104,7 @@
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-        </ListBox>
+        </ListBox>-->
 
         <StackPanel Grid.Row="3" Orientation="Horizontal">
             <TextBlock Text="Status: " Margin="8,8,0,8" VerticalAlignment="Center"/>

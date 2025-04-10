@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3179.45" />
     <PackageReference Include="Svg" Version="3.4.7" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.4" />
+    <PackageReference Include="WPF-UI" Version="4.0.2" />
   </ItemGroup>
 
   <ItemGroup>

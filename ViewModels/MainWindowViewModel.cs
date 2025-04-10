@@ -27,6 +27,17 @@ namespace WebView2Traffic.ViewModels
             }
         }
 
+        private List<TrafficURL> _trafficURLsRenderList;
+        public List<TrafficURL> TrafficURLsRenderList
+        {
+            get => _trafficURLsRenderList;
+            set
+            {
+                _trafficURLsRenderList = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string? _excelFilePath;
         public string? ExcelFilePath
         {
@@ -115,7 +126,9 @@ namespace WebView2Traffic.ViewModels
             {
                 LoadExcelResponse = DataSource.Instance.SetFilePath(ExcelFilePath);
                 TrafficURLs = DataSource.Instance.TrafficURLs;
+                TrafficURLsRenderList = DataSource.Instance.TrafficURLs;
                 AddClientsCommand.RaiseCanExecuteChanged();
+                ReloadDataCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -132,7 +145,7 @@ namespace WebView2Traffic.ViewModels
                 for (int i = 0; i < _clientWindowCount; i++)
                 {
                     var trafficURL = DataSource.Instance.GetNextTrafficURL();
-                    Console.WriteLine(trafficURL.ToString());
+                    Console.WriteLine(trafficURL?.ToString());
                     if (trafficURL != null)
                     {
                         var clientWindow = new ClientWindow()
@@ -169,7 +182,8 @@ namespace WebView2Traffic.ViewModels
         {
             foreach (var client in Clients)
             {
-                client.ViewModel.StopSession(); // Đóng tất cả cửa sổ client
+                client.ViewModel.StopSession(); // Kết thúc tất cả session
+                client.Window.Close(); // Đóng tất cả cửa sổ
             }
             Clients.Clear(); // Xóa tất cả client khỏi danh sách
         }
@@ -181,11 +195,12 @@ namespace WebView2Traffic.ViewModels
 
         private void ReloadData(object obj)
         {
+            Debug.WriteLine("Clicked reload");
             if (!string.IsNullOrEmpty(ExcelFilePath))
             {
-                Debug.WriteLine("Clicked reload");
                 LoadExcelResponse = DataSource.Instance.SetFilePath(ExcelFilePath);
-                TrafficURLs = DataSource.Instance.TrafficURLs;
+                TrafficURLsRenderList = [];
+                TrafficURLsRenderList = DataSource.Instance.TrafficURLs;
             }
         }
 

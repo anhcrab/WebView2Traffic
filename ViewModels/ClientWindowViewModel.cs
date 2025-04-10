@@ -2,6 +2,7 @@
 using Microsoft.Web.WebView2.Wpf;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using WebView2Traffic.Data;
 using WebView2Traffic.Models;
@@ -13,11 +14,7 @@ namespace WebView2Traffic.ViewModels
         public string Uid { get; } = Guid.NewGuid().ToString();
 
         private const int LIMIT_SERP = 7;
-        private const string PROXY_IP_ADDRESS = "117.0.200.23";
-        private const string PROXY_PORT = "40599";
-        private const string PROXY_USERNAME = "yiekd_phanp";
-        private const string PROXY_PASSWORD = "HsRDWj87";
-        private CoreWebView2Environment _webView2Environment;
+        private readonly CoreWebView2Environment _webView2Environment;
 
         private readonly List<string> _internalLinks =
         [
@@ -134,13 +131,6 @@ namespace WebView2Traffic.ViewModels
             {
                 if (_webView2.CoreWebView2 == null)
                 {
-                    //var proxy = $"{PROXY_USERNAME}:{PROXY_PASSWORD}:{PROXY_IP_ADDRESS}:{PROXY_PORT}";
-                    //var options = new CoreWebView2EnvironmentOptions
-                    //{
-                    //    AdditionalBrowserArguments = $"--proxy-server={proxy}"
-                    //};
-
-                    //_webView2Environment = await CoreWebView2Environment.CreateAsync(null, null, options);
                     await _webView2.EnsureCoreWebView2Async();
                 }
                 await StartSessionAsync();
@@ -161,10 +151,20 @@ namespace WebView2Traffic.ViewModels
 
             try
             {
+                // Always start at google.com
                 await NavigateToGoogle();
-                if (_trafficURL.Type?.ToLower(System.Globalization.CultureInfo.CurrentCulture) == "search")
+                var trafficType = _trafficURL.Type != null ? _trafficURL.Type?.ToLower(CultureInfo.CurrentCulture) : "";
+                if (trafficType == "direct")
                 {
-                    Debug.WriteLine("Search");
+                    // Logic for traffic direct
+                    Debug.WriteLine("Start Handle Direct Traffic");
+                    NotFoundSERP = true;
+                    await NavigateToTargetUrlAsync(_trafficURL.URL);
+                }
+                else if (trafficType == "search")
+                {
+                    // Logic for traffic search
+                    Debug.WriteLine("Start Handle Google Search Traffic");
                     if (!await PerformSearchAndNavigateAsync(_trafficURL.Keyword, _trafficURL.URL, token))
                     {
                         // Handle captcha or timeout, for now just navigate directly
@@ -172,11 +172,28 @@ namespace WebView2Traffic.ViewModels
                         await NavigateToTargetUrlAsync(_trafficURL.URL);
                     }
                 }
-                else if (_trafficURL.Type?.ToLower(System.Globalization.CultureInfo.CurrentCulture) == "direct")
+                else if (trafficType == "maps")
                 {
-                    Debug.WriteLine("Direct");
+                    // TODO: Logic for traffic google maps
+                    Debug.WriteLine("Start Handle Google Maps Traffic");
                     NotFoundSERP = true;
-                    await NavigateToTargetUrlAsync(_trafficURL.URL);
+                    // Navigate to https://www.google.com/maps 
+                    // Search "Terus - Digital Marketing Agency"
+                    // Click to link https://terusvn.com
+                    // Scroll 120s
+                    // Visit internal links
+                }
+                else if (trafficType == "news")
+                {
+                    // TODO: Logic for traffic google news
+                    Debug.WriteLine("Start Handle Google News Traffic");
+                    NotFoundSERP = true;
+                }
+                else if (trafficType == "backlink")
+                {
+                    // TODO: Logic for traffic backlink
+                    Debug.WriteLine("Start Handle Backlink Traffic");
+                    NotFoundSERP = true;
                 }
 
                 if (!token.IsCancellationRequested)
@@ -190,6 +207,7 @@ namespace WebView2Traffic.ViewModels
                             CurrentQuantity = _trafficURL.CurrentQuantity + 1,
                             RequireQuantity = _trafficURL.RequireQuantity // Keep the original require quantity
                         });
+                        Debug.WriteLine("Chạy tới đây r nghe");
                     }
                 }
             }
@@ -209,14 +227,27 @@ namespace WebView2Traffic.ViewModels
                     TrafficURL = trafficURL;
                     await StartSessionAsync();
                 }
+                else
+                {
+                    Debug.WriteLine("No traffic new");
+                }
             }
         }
 
         public void StopSession()
         {
-            _cancellationTokenSource?.Cancel();
-            IsRunning = false;
-            // Optionally perform cleanup on WebView2 if needed
+            try
+            {
+                _cancellationTokenSource?.Cancel();
+                IsRunning = false;
+                // Optionally perform cleanup on WebView2 if needed
+                _webView2.Stop();
+                _webView2.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to stop session: {ex.Message}");
+            }
         }
 
         private async Task NavigateToGoogle()
@@ -340,7 +371,7 @@ namespace WebView2Traffic.ViewModels
             await ExecuteJavaScriptAsync(ScrollToBottomJs());
             if (!await IsAtBottomAsync(token))
             {
-                await Task.Delay(30 * 1000, token);
+                await Task.Delay(1 * 1000, token);
             }
             IsScrolling = false;
         }
