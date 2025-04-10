@@ -13,6 +13,11 @@ namespace WebView2Traffic.ViewModels
         public string Uid { get; } = Guid.NewGuid().ToString();
 
         private const int LIMIT_SERP = 7;
+        private const string PROXY_IP_ADDRESS = "117.0.200.23";
+        private const string PROXY_PORT = "40599";
+        private const string PROXY_USERNAME = "yiekd_phanp";
+        private const string PROXY_PASSWORD = "HsRDWj87";
+        private CoreWebView2Environment _webView2Environment;
 
         private readonly List<string> _internalLinks =
         [
@@ -118,6 +123,13 @@ namespace WebView2Traffic.ViewModels
             {
                 if (_webView2.CoreWebView2 == null)
                 {
+                    //var proxy = $"{PROXY_USERNAME}:{PROXY_PASSWORD}:{PROXY_IP_ADDRESS}:{PROXY_PORT}";
+                    //var options = new CoreWebView2EnvironmentOptions
+                    //{
+                    //    AdditionalBrowserArguments = $"--proxy-server={proxy}"
+                    //};
+
+                    //_webView2Environment = await CoreWebView2Environment.CreateAsync(null, null, options);
                     await _webView2.EnsureCoreWebView2Async();
                 }
                 await StartSessionAsync();
@@ -179,9 +191,9 @@ namespace WebView2Traffic.ViewModels
                 if (trafficURL != null)
                 {
                     TrafficURL = trafficURL;
-                    await StartSessionAsync();
-                }
+                await StartSessionAsync();
             }
+        }
         }
 
         public void StopSession()
