@@ -98,13 +98,13 @@ namespace WebView2Traffic.Data
                 return false;
             })!;
             while (traffic == null && tmpId <= _trafficURLs.Count)
-            {
+        {
                 if (tmpId == id - 1) break;
                 traffic = _trafficURLs.FirstOrDefault(traffic =>
-                {
+            {
                     if (traffic.ID == tmpId && traffic.CurrentQuantity <= traffic.RequireQuantity) return true;
-                    return false;
-                })!;
+                return false;
+            })!;
                 if (tmpId >= _trafficURLs.Count + 1) tmpId = 1;
             }
             return traffic;

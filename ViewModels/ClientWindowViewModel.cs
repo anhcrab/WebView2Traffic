@@ -13,6 +13,11 @@ namespace WebView2Traffic.ViewModels
         public string Uid { get; } = Guid.NewGuid().ToString();
 
         private const int LIMIT_SERP = 7;
+        private const string PROXY_IP_ADDRESS = "117.0.200.23";
+        private const string PROXY_PORT = "40599";
+        private const string PROXY_USERNAME = "yiekd_phanp";
+        private const string PROXY_PASSWORD = "HsRDWj87";
+        private CoreWebView2Environment _webView2Environment;
 
         private readonly List<string> _internalLinks =
         [
@@ -91,6 +96,17 @@ namespace WebView2Traffic.ViewModels
             }
         }
 
+        private bool _notFoundSERP;
+        public bool NotFoundSERP
+        {
+            get => _notFoundSERP;
+            set
+            {
+                _notFoundSERP = value;
+                OnPropertyChanged(nameof(NotFoundSERP));
+            }
+        }
+
         public ClientWindowViewModel(TrafficURL trafficURL, WebView2 webView2)
         {
             _webView2 = webView2;
@@ -118,6 +134,13 @@ namespace WebView2Traffic.ViewModels
             {
                 if (_webView2.CoreWebView2 == null)
                 {
+                    //var proxy = $"{PROXY_USERNAME}:{PROXY_PASSWORD}:{PROXY_IP_ADDRESS}:{PROXY_PORT}";
+                    //var options = new CoreWebView2EnvironmentOptions
+                    //{
+                    //    AdditionalBrowserArguments = $"--proxy-server={proxy}"
+                    //};
+
+                    //_webView2Environment = await CoreWebView2Environment.CreateAsync(null, null, options);
                     await _webView2.EnsureCoreWebView2Async();
                 }
                 await StartSessionAsync();
@@ -157,12 +180,15 @@ namespace WebView2Traffic.ViewModels
                 if (!token.IsCancellationRequested)
                 {
                     await ScrollAndProcessInternalLinksAsync(token);
-                    DataSource.Instance.UpdateTrafficURL(new TrafficURL
+                    if (_trafficURL.Type == "Direct" || (_trafficURL.Type == "Search" && !NotFoundSERP))
                     {
-                        ID = _trafficURL.ID,
-                        CurrentQuantity = _trafficURL.CurrentQuantity + 1,
-                        RequireQuantity = _trafficURL.RequireQuantity // Keep the original require quantity
-                    });
+                        DataSource.Instance.UpdateTrafficURL(new TrafficURL
+                        {
+                            ID = _trafficURL.ID,
+                            CurrentQuantity = _trafficURL.CurrentQuantity + 1,
+                            RequireQuantity = _trafficURL.RequireQuantity // Keep the original require quantity
+                        });
+                    }
                 }
             }
             catch (TaskCanceledException)
