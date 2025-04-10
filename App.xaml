@@ -1,0 +1,12 @@
+﻿<Application x:Class="WebView2Traffic.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:WebView2Traffic"
+             xmlns:converter="clr-namespace:WebView2Traffic.Converters"
+             StartupUri="Views/MainWindow.xaml">
+    <Application.Resources>
+        <converter:NonEmptyStringToBooleanConverter x:Key="NonEmptyStringToBooleanConverter" />
+        <converter:IntegerGreaterThanZeroConverter x:Key="IntegerGreaterThanZeroConverter" />
+        <converter:ModelConverter x:Key="ModelConverter" />
+    </Application.Resources>
+</Application>
