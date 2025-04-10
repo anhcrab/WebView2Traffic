@@ -1,4 +1,5 @@
 ﻿using OfficeOpenXml;
+using System.Diagnostics;
 using System.IO;
 using WebView2Traffic.Models;
 
@@ -33,6 +34,8 @@ namespace WebView2Traffic.Data
 
         public string SetFilePath(string filePath)
         {
+            _excelFilePath = "";
+            Debug.WriteLine("Reload file");
             _excelFilePath = filePath;
             return LoadDataFromExcel();
         }

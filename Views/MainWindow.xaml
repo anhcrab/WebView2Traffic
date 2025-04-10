@@ -7,7 +7,9 @@
         xmlns:vm="clr-namespace:WebView2Traffic.ViewModels"
         mc:Ignorable="d"
         Title="Terus Traffic Controller (Do not close this tab while running traffic)" 
-        Height="768" Width="1280" WindowStartupLocation="CenterScreen">
+        Height="768" 
+        Width="1280"
+        WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>
@@ -68,7 +70,8 @@
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Reload Data" 
-                        Command="{Binding StopAllClientsCommand, UpdateSourceTrigger=PropertyChanged}" 
+                        Command="{Binding StopAllClientsCommand}" 
+                        Click="Button_Click"
                         Margin="10,0,0,0"
                         Height="24"
                         Width="80"

@@ -11,12 +11,5 @@
     <Grid>
         <wv2:WebView2 x:Name="WebView" />
         <TextBlock Visibility="Collapsed" x:Name="CaptchaDetectedTextBlock" Text="Captcha Detected. Waiting..." Background="Yellow" Padding="10"/>
-        <!--<DockPanel DockPanel.Dock="Top">
-            <Button x:Name="ButtonGo"
-              DockPanel.Dock="Right"
-              Content="Go" />
-            <TextBox x:Name="AddressBar"/>
-        </DockPanel>
-        <wv2:WebView2 x:Name="WebViewControl" Source="https://www.bing.com" />-->
     </Grid>
 </Window>

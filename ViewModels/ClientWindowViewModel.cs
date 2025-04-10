@@ -268,14 +268,14 @@ namespace WebView2Traffic.ViewModels
         {
             for (int page = 1; page <= LIMIT_SERP; page++) // Limit search pages
             {
-                string selector = $"a[href^='{targetUrl}'] h3";
-                string? result = await EvaluateJavaScriptAsync($"document.querySelector('{selector}')?.innerText;");
+                string selector = $"a[href='{targetUrl}'] h3";
+                string? result = await EvaluateJavaScriptAsync($"document.querySelector(\"{selector}\")?.innerText;");
                 if (!string.IsNullOrEmpty(result) && result != "null" && result != "undefined")
                 {
                     await ScrollToBottomAsync(token);
                     while (IsScrolling) await Task.Delay(5000, token);
                     Debug.WriteLine($"Text link: {result}");
-                    await ExecuteJavaScriptAsync($"setTimeout(() => {{ document.querySelector('a[href^=\"{targetUrl}\"]').click(); }}, 1000);");
+                    await ExecuteJavaScriptAsync($"setTimeout(() => {{ document.querySelector(\"a[href='{targetUrl}']\").click(); }}, 1000);");
                     await Task.Delay(5000, token); // Wait for target page to load
                     return true;
                 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Web.WebView2.Wpf;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using WebView2Traffic.Commands;
@@ -182,6 +183,7 @@ namespace WebView2Traffic.ViewModels
         {
             if (!string.IsNullOrEmpty(ExcelFilePath))
             {
+                Debug.WriteLine("Clicked reload");
                 LoadExcelResponse = DataSource.Instance.SetFilePath(ExcelFilePath);
                 TrafficURLs = DataSource.Instance.TrafficURLs;
             }
@@ -189,7 +191,7 @@ namespace WebView2Traffic.ViewModels
 
         private bool CanReloadData(object obj)
         {
-            return string.IsNullOrEmpty(ExcelFilePath);
+            return !string.IsNullOrEmpty(ExcelFilePath);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
