@@ -168,12 +168,14 @@ namespace WebView2Traffic.ViewModels
                     if (!await PerformSearchAndNavigateAsync(_trafficURL.Keyword, _trafficURL.URL, token))
                     {
                         // Handle captcha or timeout, for now just navigate directly
+                        NotFoundSERP = true;
                         await NavigateToTargetUrlAsync(_trafficURL.URL);
                     }
                 }
                 else if (_trafficURL.Type?.ToLower(System.Globalization.CultureInfo.CurrentCulture) == "direct")
                 {
                     Debug.WriteLine("Direct");
+                    NotFoundSERP = true;
                     await NavigateToTargetUrlAsync(_trafficURL.URL);
                 }
 
